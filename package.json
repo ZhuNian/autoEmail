@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/ZhuNian/autoEmail/issues"
   },
-  "homepage": "https://github.com/ZhuNian/autoEmail#readme"
+  "homepage": "https://github.com/ZhuNian/autoEmail#readme",
+  "dependencies": {
+    "nodemailer": "^4.0.1"
+  }
 }
