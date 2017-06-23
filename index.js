@@ -1,31 +1,66 @@
 const nodemailer = require('nodemailer');
+const config = require('./config');
+const template = require('./template');
+const shell = require('shelljs')
 
-var user = "";
-var pass = "";
+if (!config || !config.email || !config.pass || !config.to) {
+  console.log('oops! touch a config file for your gmail address, password and receiver!');
+  return;
+}
+
+if (!config.repoPath) {
+  console.log('oops! repo path is NEED!');
+  return;
+}
 
 let transporter = nodemailer.createTransport({
-  host: 'smtpout.secureserver.net',
-  port: 465,
-  secure: true, // secure:true for port 465, secure:false for port 587
+  service: 'Gmail',
   auth: {
-    user: user,
-    pass: pass
+    user: config.email,
+    pass: config.pass
   }
 });
 
-// setup email data with unicode symbols
+let date = new Date();
+
 let mailOptions = {
-  from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
-  to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-  subject: 'Hello ✔', // Subject line
-  text: 'Hello world ?', // plain text body
-  html: '<b>Hello world ?</b>' // html body
+  from: `${config.from}  <${config.email}>`,
+  to: config.to,
+  subject: `Daily Report - ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.`,
+  html: ''
 };
 
-// send mail with defined transport object
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    return console.log(error);
+var sendMailToBoss = (commits) => {
+  mailOptions.html = template(commits.replace(/\*/g, '').split('\n'));
+  console.log(mailOptions.html);
+
+  // transporter.sendMail(mailOptions, (error, info) => {
+  //   if (error) {
+  //     return _sendFailEmail(error);
+  //   }
+
+  //   console.log('Congratuations!\n Message %s sent: %s', info.messageId, info.response);
+  // });
+};
+
+shell.cd(config.repoPath);
+
+shell.exec('git log --graph --pretty=format:"%s" --abbrev-commit  --since="0am"', {
+  silent: true
+}, (code, stdout, stderr) => {
+  if (code != 0) {
+
   }
-  console.log('Message %s sent: %s', info.messageId, info.response);
+  sendMailToBoss(stdout);
 });
+
+function _sendFailEmail(err) {
+  console.log(err);
+
+  transporter.sendMail({
+    from: mailOptions.from,
+    to: mailOptions.from,
+    subject: 'Failed! Boss did not get your email!',
+    text: err ? JSON.stringify(err) : `send email failed`
+  });
+}
