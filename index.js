@@ -45,7 +45,12 @@ var sendMailToBoss = (commits) => {
       return _sendFailEmail(error);
     }
 
-    console.log('Congratuations!\n Message %s sent: %s', info.messageId, info.response);
+    console.log(`Congratuactions!, ${date.toLocaleDateString()} mail succeed!\n`);
+    console.log(`options: ${JSON.stringify({
+      from: `${config.from}  <${config.email}>`,
+      to: config.to,
+      subject: `Daily Report - ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.`,
+    })}\n\n`);
   });
 };
 
@@ -59,7 +64,7 @@ shell.exec('git log --graph --pretty=format:"%s" --abbrev-commit  --since="0am"'
     return;
   }
 
-  if(!stdout) {
+  if (!stdout) {
     return;
   }
 
@@ -67,6 +72,7 @@ shell.exec('git log --graph --pretty=format:"%s" --abbrev-commit  --since="0am"'
 });
 
 function _sendFailEmail(err) {
+  console.log(`oops!, ${date.toLocaleDateString()} mail filed!\n`);
   console.log(err);
 
   transporter.sendMail({

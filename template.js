@@ -74,7 +74,7 @@ module.exports = props => {
 };
 
 function _getTable(commit, index) {
-  let arr = commit.split(';');
+  let arr = commit.split(/[;；]/);
 
   let html =
     `<div>
