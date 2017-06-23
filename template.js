@@ -31,7 +31,7 @@ module.exports = props => {
     <div>
       ${props.map((p, index) => {
         return _getTable(p, index);
-      })}
+      }).join('')}
     </div>
   </div>
 </div>`;
@@ -39,7 +39,6 @@ module.exports = props => {
 
 function _getTable(commit, index) {
   let arr = commit.split(',');
-  console.log(arr);
 
   let html =
     `<div>
@@ -52,14 +51,14 @@ function _getTable(commit, index) {
         </div>
 
         <div style="display:inline-block;width:15%;height:25px;border-right:1px solid black;border-bottom:1px solid black">
-        ${arr[1] || ''}
+        ${arr[1] || '-'}
         </div>
 
         <div style="display:inline-block;height:25px;width:27%;border-right:1px solid black;border-bottom:1px solid black">
-        ${arr[2] || ''}
+        ${arr[2] || '-'}
         </div>
 
-       </div>`;
+       </div>`
 
   return html;
 }
