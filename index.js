@@ -31,7 +31,14 @@ let mailOptions = {
 };
 
 var sendMailToBoss = (commits) => {
-  mailOptions.html = template(commits.replace(/\*/g, '').split('\n'));
+  mailOptions.html = template({
+    table: commits.replace(/\*/g, '').split('\n'),
+    footer: {
+      userName: config.from,
+      phone: config.phone || '',
+      email: config.email
+    }
+  });
   console.log(mailOptions.html);
 
   // transporter.sendMail(mailOptions, (error, info) => {
