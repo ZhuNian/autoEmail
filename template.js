@@ -37,7 +37,6 @@ module.exports = props => {
 
   <div class="footer" style="margin-top:150px">
     <hr style="width:300px;margin-left:0">
-    </hr>
 
     <div style="height:35px">
       <span>

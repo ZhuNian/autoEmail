@@ -9,7 +9,7 @@ if (!config || !config.email || !config.pass || !config.to) {
 }
 
 if (!config.repoPath) {
-  console.log('oops! repo path is NEED!');
+  console.log('oops! repo path is NEEDED!');
   return;
 }
 
@@ -36,18 +36,17 @@ var sendMailToBoss = (commits) => {
     footer: {
       userName: config.from,
       phone: config.phone || '',
-      email: config.email
+      email: config.workingEmail || config.email
     }
   });
-  console.log(mailOptions.html);
 
-  // transporter.sendMail(mailOptions, (error, info) => {
-  //   if (error) {
-  //     return _sendFailEmail(error);
-  //   }
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return _sendFailEmail(error);
+    }
 
-  //   console.log('Congratuations!\n Message %s sent: %s', info.messageId, info.response);
-  // });
+    console.log('Congratuations!\n Message %s sent: %s', info.messageId, info.response);
+  });
 };
 
 shell.cd(config.repoPath);
@@ -56,8 +55,14 @@ shell.exec('git log --graph --pretty=format:"%s" --abbrev-commit  --since="0am"'
   silent: true
 }, (code, stdout, stderr) => {
   if (code != 0) {
-
+    _sendFailEmail(stderr);
+    return;
   }
+
+  if(!stdout) {
+    return;
+  }
+
   sendMailToBoss(stdout);
 });
 
@@ -67,7 +72,7 @@ function _sendFailEmail(err) {
   transporter.sendMail({
     from: mailOptions.from,
     to: mailOptions.from,
-    subject: 'Failed! Boss did not get your email!',
-    text: err ? JSON.stringify(err) : `send email failed`
+    subject: `Failed! Boss did not get your email in ${date.toLocaleString()}`,
+    text: `send email failed,mail options: ${JSON.stringify(mailOptions)}`
   });
 }
