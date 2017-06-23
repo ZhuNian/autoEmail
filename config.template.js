@@ -1,5 +1,5 @@
 module.exports = {
-  repoPath: './',
+  repoPath: '',
   email: '',
   pass: '',
   from: '',
