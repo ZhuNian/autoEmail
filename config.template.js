@@ -3,5 +3,7 @@ module.exports = {
   email: '',
   pass: '',
   from: '',
-  to: ''
+  to: '',
+  phone: '',
+  workingEmail: ''
 };
